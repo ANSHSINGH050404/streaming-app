@@ -45,7 +45,7 @@ export default function Navbar() {
         <button onClick={handleLogout} className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground">
           Logout
         </button>
-        <a href="#book"
+        <a href="#events-list"
           className="px-5 py-2.5 text-xs tracking-widest uppercase transition-all duration-300 hover:opacity-90 bg-primary text-primary-foreground">
           Book Event
         </a>

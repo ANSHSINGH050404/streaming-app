@@ -123,7 +123,7 @@ export default function EventCard({ event, index }: { event: Event; index: numbe
             <button
               disabled={!event.available}
               onClick={handleBookNow}
-              className={`px-5 py-2.5 text-xs tracking-widest uppercase transition-all duration-300 ${
+              className={`relative z-20 px-5 py-2.5 text-xs tracking-widest uppercase transition-all duration-300 ${
                 event.available 
                   ? "bg-primary text-primary-foreground hover:opacity-90" 
                   : "bg-muted text-muted-foreground cursor-not-allowed"

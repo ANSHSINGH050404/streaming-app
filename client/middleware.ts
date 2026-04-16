@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/events");
-  const isAdminRoute = pathname.startsWith("/events");
+  const isAdminRoute = pathname === "/events";
 
   // If trying to access a protected route without a token
   if (isProtectedRoute && !token) {
