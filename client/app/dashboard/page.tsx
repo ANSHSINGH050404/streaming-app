@@ -1,98 +1,31 @@
 "use client";
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Hero from '@/components/Hero'
 import Navbar from '@/components/ui/navbar'
-import EventCard, { Event } from '@/components/Card'
-
-// Dummy Data
-const DUMMY_EVENTS: readonly Event[] = [
-  {
-    id: "1",
-    name: "Summer Midnight Gala",
-    type: "Gala",
-    tag: "Luxury",
-    venue: "The Grand Palace, Mumbai",
-    date: "2024-07-15",
-    capacity: 50,
-    price: 4999,
-    available: true,
-    amenities: ["Dinner Included", "Live Jazz", "Valet Parking"]
-  },
-  {
-    id: "2",
-    name: "Tech Pulse Conference 2024",
-    type: "Conference",
-    tag: "Trending",
-    venue: "Innovation Hub, Bangalore",
-    date: "2024-08-10",
-    capacity: 120,
-    price: 1500,
-    available: true,
-    amenities: ["Networking Lunch", "Swag Kits", "Workshop Access"]
-  },
-  {
-    id: "3",
-    name: "Acoustic Sunset Concert",
-    type: "Concert",
-    tag: "Sold Out Fast",
-    venue: "Seaside Arena, Goa",
-    date: "2024-06-20",
-    capacity: 0,
-    price: 2500,
-    available: false,
-    amenities: ["Beachside View", "Free Drinks", "Priority Entry"]
-  },
-  {
-    id: "4",
-    name: "Digital Marketing Workshop",
-    type: "Workshop",
-    venue: "Creative Space, Delhi",
-    date: "2024-09-05",
-    capacity: 25,
-    price: 800,
-    available: true,
-    amenities: ["Certificate", "Study Material", "Mentorship"]
-  },
-  {
-    id: "5",
-    name: "Classical Symphony Night",
-    type: "Concert",
-    tag: "Featured",
-    venue: "Royal Opera House, Mumbai",
-    date: "2024-12-12",
-    capacity: 15,
-    price: 3500,
-    available: true,
-    amenities: ["Premium Seating", "Meet & Greet", "Souvenir"]
-  },
-  {
-    id: "6",
-    name: "Annual Startup Summit",
-    type: "Conference",
-    venue: "Convention Center, Hyderabad",
-    date: "2024-11-15",
-    capacity: 300,
-    price: 2000,
-    available: true,
-    amenities: ["Investor Pitch", "Lunch", "Exhibition Pass"]
-  }
-] as const;
+import EventCard from '@/components/Card'
+import { useEventStore } from '@/lib/api'
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [date, setDate] = useState("");
+  
+  const { events, fetchEvents, loading } = useEventStore();
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const filteredEvents = useMemo(() => {
-    return DUMMY_EVENTS.filter(event => {
+    return events.filter(event => {
       const matchesSearch = event.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             event.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             event.venue.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesDate = date === "" || event.date === date;
+      const matchesDate = date === "" || event.date.includes(date);
       
       return matchesSearch && matchesDate;
     });
-  }, [searchQuery, date]);
+  }, [events, searchQuery, date]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -117,7 +50,11 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {filteredEvents.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        ) : filteredEvents.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((event, index) => (
               <EventCard key={event.id} event={event} index={index} />
