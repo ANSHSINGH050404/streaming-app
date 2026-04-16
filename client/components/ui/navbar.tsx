@@ -3,10 +3,17 @@ import { useState } from "react";
 import { Menu, X, Plus } from "lucide-react";
 import { useAuthStore } from "@/lib/api";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { role, logout } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-8 py-5 flex items-center justify-between"
@@ -35,7 +42,7 @@ export default function Navbar() {
                 <span className="text-xs tracking-widest uppercase font-bold">Host Event</span>
             </Link>
         )}
-        <button onClick={logout} className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground">
+        <button onClick={handleLogout} className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground">
           Logout
         </button>
         <a href="#book"
@@ -52,9 +59,15 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <div className="absolute top-full left-0 right-0 py-6 px-8 flex flex-col gap-4 text-xs tracking-widest uppercase bg-card border-b border-border">
-          {["Explore", "Categories", "Venues", "Contact", "Account"].map(item => (
+          {["Explore", "Categories", "Venues", "Contact"].map(item => (
             <a key={item} href="#" className="py-1 text-muted-foreground hover:text-foreground">{item}</a>
           ))}
+          {role === "admin" && (
+              <Link href="/events" className="py-1 text-primary font-bold">Host Event</Link>
+          )}
+          <button onClick={handleLogout} className="py-1 text-left text-muted-foreground hover:text-foreground">
+            Logout
+          </button>
           <a href="#book" className="mt-2 px-5 py-3 text-center bg-primary text-primary-foreground">Book Event</a>
         </div>
       )}
