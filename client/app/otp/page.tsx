@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
 import { useState, Suspense } from "react";
-import { BACKEND_URL } from "@/lib/api";
+import { BACKEND_URL, useAuthStore } from "@/lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -20,18 +20,20 @@ function OTPContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const phoneNumber = searchParams.get("phone");
+  const role = searchParams.get("role") || "user";
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(`${BACKEND_URL}/admin/verify`, {
+      const endpoint = role === "admin" ? "/admin/verify" : "/users/verify";
+      const res = await axios.post(`${BACKEND_URL}${endpoint}`, {
         phone_number: phoneNumber,
         otp: otp,
       });
 
       const data = res.data;
 
-      localStorage.setItem("authToken", data.token);
-      Cookies.set("authToken", data.token, { expires: 7 }); // Set cookie for 7 days
+      setAuth(data.token, data.user.role || (role as string));
       router.push(`/dashboard`);
     } catch (err) {
       console.error(err);

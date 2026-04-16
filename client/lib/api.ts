@@ -35,25 +35,24 @@ export const useEventStore = create<EventStore>((set) => ({
 
 interface AuthStore {
   token: string | null;
-  setToken: (token: string | null) => void;
+  role: string | null;
+  setAuth: (token: string, role: string) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
   token: typeof window !== 'undefined' ? localStorage.getItem("authToken") : null,
-  setToken: (token) => {
-    if (token) {
-      localStorage.setItem("authToken", token);
-      Cookies.set("authToken", token, { expires: 7 });
-    } else {
-      localStorage.removeItem("authToken");
-      Cookies.remove("authToken");
-    }
-    set({ token });
+  role: typeof window !== 'undefined' ? Cookies.get("userRole") || null : null,
+  setAuth: (token, role) => {
+    localStorage.setItem("authToken", token);
+    Cookies.set("authToken", token, { expires: 7 });
+    Cookies.set("userRole", role, { expires: 7 });
+    set({ token, role });
   },
   logout: () => {
     localStorage.removeItem("authToken");
     Cookies.remove("authToken");
-    set({ token: null });
+    Cookies.remove("userRole");
+    set({ token: null, role: null });
   },
 }));

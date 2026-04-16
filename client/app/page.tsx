@@ -18,6 +18,7 @@ import axios from "axios";
 
 export default function HomePage() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [role, setRole] = useState<"user" | "admin">("user");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -31,7 +32,8 @@ export default function HomePage() {
     try {
       setLoading(true);
 
-      const res = await axios.post(`${BACKEND_URL}/admin/signup`, {
+      const endpoint = role === "admin" ? "/admin/signup" : "/users/signup";
+      const res = await axios.post(`${BACKEND_URL}${endpoint}`, {
         phone_number: phoneNumber,
       });
 
@@ -39,8 +41,8 @@ export default function HomePage() {
 
       console.log("OTP:", data.otp);
 
-      // navigate to otp page with phone number
-      router.push(`/otp?phone=${phoneNumber}`);
+      // navigate to otp page with phone number and role
+      router.push(`/otp?phone=${phoneNumber}&role=${role}`);
     } catch (err) {
       console.error(err);
       alert("Something went wrong");
@@ -53,13 +55,10 @@ export default function HomePage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle>Welcome to Eventia</CardTitle>
           <CardDescription>
-            Enter your phone number to receive an OTP
+            Choose your role and enter your phone number
           </CardDescription>
-          <CardAction>
-            <Button variant="link">Sign Up</Button>
-          </CardAction>
         </CardHeader>
 
         <CardContent>
@@ -70,12 +69,33 @@ export default function HomePage() {
             }}
             className="flex flex-col gap-6"
           >
+            <div className="flex p-1 bg-muted rounded-md">
+              <button
+                type="button"
+                onClick={() => setRole("user")}
+                className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-sm transition-all ${
+                  role === "user" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                User
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("admin")}
+                className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-sm transition-all ${
+                  role === "admin" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Admin
+              </button>
+            </div>
+
             <div className="grid gap-2">
               <Label htmlFor="phone_number">Phone Number</Label>
               <Input
                 id="phone_number"
                 type="tel"
-                placeholder="Enter phone number"
+                placeholder="Enter 10-digit number"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
@@ -83,7 +103,7 @@ export default function HomePage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Sending OTP..." : "Submit"}
+              {loading ? "Sending OTP..." : "Get Started"}
             </Button>
           </form>
         </CardContent>
