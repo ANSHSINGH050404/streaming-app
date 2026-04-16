@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useState, Suspense } from "react";
 import { BACKEND_URL } from "@/lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
 
 function OTPContent() {
   const [otp, setOtp] = useState("");
@@ -21,28 +22,22 @@ function OTPContent() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/admin/verify`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone_number: phoneNumber,
-          otp: otp,
-        }),
+      const res = await axios.post(`${BACKEND_URL}/admin/verify`, {
+        phone_number: phoneNumber,
+        otp: otp,
       });
 
-      const data = await res.json();
+      const data = res.data;
 
-      if (res.ok) {
-        localStorage.setItem("authToken", data.token);
-        router.push(`/dashboard`);
-      } else {
-        alert(data.error || data.message || "Verification failed");
-      }
+      localStorage.setItem("authToken", data.token);
+      router.push(`/dashboard`);
     } catch (err) {
       console.error(err);
-      alert("An error occurred");
+      let errorMessage = "Verification failed";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.error || err.response?.data?.message || errorMessage;
+      }
+      alert(errorMessage);
     }
   };
   return (

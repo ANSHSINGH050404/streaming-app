@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { BACKEND_URL } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function HomePage() {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -30,21 +31,11 @@ export default function HomePage() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${BACKEND_URL}/admin/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone_number: phoneNumber,
-        }),
+      const res = await axios.post(`${BACKEND_URL}/admin/signup`, {
+        phone_number: phoneNumber,
       });
 
-      if (!res.ok) {
-        throw new Error("Signup failed");
-      }
-
-      const data = await res.json();
+      const data = res.data;
 
       console.log("OTP:", data.otp);
 
