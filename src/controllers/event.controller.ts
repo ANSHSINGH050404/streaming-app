@@ -163,3 +163,51 @@ export const deleteEvent = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+
+export const bookEvent = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "User authentication required" });
+  }
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: id as string },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (!event.available || event.capacity <= 0) {
+      return res.status(400).json({ message: "Event is fully booked or unavailable" });
+    }
+
+    // Create booking and decrement capacity
+    const [booking] = await prisma.$transaction([
+      prisma.booking.create({
+        data: {
+          eventId: event.id,
+          userId: userId,
+        },
+      }),
+      prisma.event.update({
+        where: { id: event.id },
+        data: {
+          capacity: {
+            decrement: 1,
+          },
+          available: event.capacity - 1 > 0,
+        },
+      }),
+    ]);
+
+    return res.status(201).json(booking);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Booking failed" });
+  }
+};

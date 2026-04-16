@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { Users, MapPin, Calendar, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export interface Event {
   id: string;
   name: string;
+  description: string;
   type: "Concert" | "Workshop" | "Gala" | "Conference";
   tag?: string;
   venue: string;
@@ -28,10 +30,19 @@ export const EVENT_PATTERNS: Record<Event["type"], string> = {
 
 export default function EventCard({ event, index }: { event: Event; index: number }) {
   const [hovered, setHovered] = useState(false);
+  const router = useRouter();
+
+  const handleBookNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (event.available) {
+      router.push(`/events/${event.id}`);
+    }
+  };
 
   return (
     <div
       className="relative group cursor-pointer transition-transform duration-500"
+      onClick={() => router.push(`/events/${event.id}`)}
       style={{ transform: hovered ? "translateY(-6px)" : "translateY(0)" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -111,6 +122,7 @@ export default function EventCard({ event, index }: { event: Event; index: numbe
             </div>
             <button
               disabled={!event.available}
+              onClick={handleBookNow}
               className={`px-5 py-2.5 text-xs tracking-widest uppercase transition-all duration-300 ${
                 event.available 
                   ? "bg-primary text-primary-foreground hover:opacity-90" 
