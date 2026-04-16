@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import axios from 'axios'
 import { Event } from '@/components/Card'
+import Cookies from 'js-cookie'
 
 export const BACKEND_URL = "http://localhost:5000";
 
@@ -43,13 +44,16 @@ export const useAuthStore = create<AuthStore>((set) => ({
   setToken: (token) => {
     if (token) {
       localStorage.setItem("authToken", token);
+      Cookies.set("authToken", token, { expires: 7 });
     } else {
       localStorage.removeItem("authToken");
+      Cookies.remove("authToken");
     }
     set({ token });
   },
   logout: () => {
     localStorage.removeItem("authToken");
+    Cookies.remove("authToken");
     set({ token: null });
   },
 }));

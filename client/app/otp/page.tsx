@@ -13,6 +13,7 @@ import { useState, Suspense } from "react";
 import { BACKEND_URL } from "@/lib/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 function OTPContent() {
   const [otp, setOtp] = useState("");
@@ -30,6 +31,7 @@ function OTPContent() {
       const data = res.data;
 
       localStorage.setItem("authToken", data.token);
+      Cookies.set("authToken", data.token, { expires: 7 }); // Set cookie for 7 days
       router.push(`/dashboard`);
     } catch (err) {
       console.error(err);
