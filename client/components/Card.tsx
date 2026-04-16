@@ -15,11 +15,15 @@ export interface Event {
   amenities: readonly string[];
 }
 
-const EVENT_PATTERNS: Record<string, string> = {
-  Concert: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0V0zm20 20h20v20H20V20z' fill='%23c8843a' fill-opacity='0.07'/%3E%3C/svg%3E")`,
-  Workshop: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='15' cy='15' r='1.5' fill='%238a9e8a' fill-opacity='0.15'/%3E%3C/svg%3E")`,
-  Gala: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10h20M10 0v20' stroke='%23b8a898' stroke-opacity='0.15' stroke-width='0.5'/%3E%3C/svg%3E")`,
-  Conference: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25 0L50 25L25 50L0 25z' fill='none' stroke='%23c8843a' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E")`,
+export const EVENT_PATTERNS: Record<Event["type"], string> = {
+  Concert:
+    'url("https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2?q=80&w=1200&auto=format&fit=crop")',
+  Workshop:
+    'url("https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1200&auto=format&fit=crop")',
+  Gala:
+    'url("https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1200&auto=format&fit=crop")',
+  Conference:
+    'url("https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1200&auto=format&fit=crop")',
 };
 
 export default function EventCard({ event, index }: { event: Event; index: number }) {
@@ -42,9 +46,9 @@ export default function EventCard({ event, index }: { event: Event; index: numbe
       {/* Card */}
       <div className="overflow-hidden border border-border bg-card">
         {/* Visual area */}
-        <div className="relative h-52 flex items-center justify-center overflow-hidden bg-muted"
+        <div className="relative h-52 flex items-center justify-center overflow-hidden bg-muted bg-cover bg-center"
           style={{
-            backgroundImage: EVENT_PATTERNS[event.type] || EVENT_PATTERNS.Gala,
+            backgroundImage: EVENT_PATTERNS[event.type],
           }}>
           {/* Event number */}
           <span className="font-display select-none text-foreground opacity-5"
