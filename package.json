@@ -18,7 +18,9 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "@types/authenticator": "^1.1.4",
     "@types/express": "^5.0.6",
+    "authenticator": "^1.1.5",
     "express": "^5.2.1",
     "pg": "^8.20.0",
     "prisma": "^7.7.0"

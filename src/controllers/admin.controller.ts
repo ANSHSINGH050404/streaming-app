@@ -2,9 +2,9 @@ import type { Request, Response } from "express";
 import { prisma } from "../config/db";
 import authenticator from "authenticator";
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllAdmin = async (req: Request, res: Response) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.admin.findMany();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch users" });
@@ -18,7 +18,7 @@ export const signup = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "phone_number is required" });
   }
   try {
-    const user = await prisma.user.upsert({
+    const user = await prisma.admin.upsert({
       where: {
         phone_number: phone_number,
       },
@@ -52,7 +52,7 @@ export const verify = async (req: Request, res: Response) => {
 
   if (isValid) {
     try {
-      const user = await prisma.user.update({
+      const user = await prisma.admin.update({
         where: { phone_number },
         data: { verified: true },
       });
@@ -69,7 +69,7 @@ export const verify = async (req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.admin.findUnique({
       where: { id: id as string },
     });
     if (!user) {
@@ -85,7 +85,7 @@ export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { username, verified } = req.body;
   try {
-    const user = await prisma.user.update({
+    const user = await prisma.admin.update({
       where: { id: id as string },
       data: {
         username,
@@ -101,7 +101,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    await prisma.user.delete({
+    await prisma.admin.delete({
       where: { id: id as string },
     });
     res.status(204).send();

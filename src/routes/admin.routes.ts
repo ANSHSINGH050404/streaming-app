@@ -1,16 +1,16 @@
 import { Router } from "express";
 import {
-  getAllUsers,
+  getAllAdmin,
   signup,
   verify,
   getUserById,
   updateUser,
   deleteUser,
-} from "../controllers/user.controller";
+} from "../controllers/admin.controller";
 
 const router = Router();
 
-router.get("/", getAllUsers);
+router.get("/", getAllAdmin);
 router.post("/signup", signup);
 router.post("/verify", verify);
 router.get("/:id", getUserById);
