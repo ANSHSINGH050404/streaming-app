@@ -3,14 +3,24 @@ import { prisma } from "../config/db";
 
 export const createEvent = async (req: Request, res: Response) => {
   const adminId = req.admin?.id;
-  const { name, description } = req.body;
+  const { 
+    name, 
+    description, 
+    type, 
+    tag, 
+    venue, 
+    date, 
+    capacity, 
+    price, 
+    amenities 
+  } = req.body;
 
   if (!adminId) {
     return res.status(401).json({ message: "Admin authentication required" });
   }
 
-  if (!name || !description) {
-    return res.status(400).json({ message: "Name and description are required" });
+  if (!name || !description || !type || !venue || !date || capacity === undefined || price === undefined) {
+    return res.status(400).json({ message: "Required fields are missing" });
   }
 
   try {
@@ -18,6 +28,13 @@ export const createEvent = async (req: Request, res: Response) => {
       data: {
         name,
         description,
+        type,
+        tag,
+        venue,
+        date: new Date(date),
+        capacity: Number(capacity),
+        price: Number(price),
+        amenities: Array.isArray(amenities) ? amenities : [],
         adminId,
       },
     });
@@ -71,7 +88,18 @@ export const getEventById = async (req: Request, res: Response) => {
 
 export const updateEvent = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, description } = req.body;
+  const { 
+    name, 
+    description, 
+    type, 
+    tag, 
+    venue, 
+    date, 
+    capacity, 
+    price, 
+    amenities, 
+    available 
+  } = req.body;
   const adminId = req.admin?.id;
 
   try {
@@ -92,6 +120,14 @@ export const updateEvent = async (req: Request, res: Response) => {
       data: {
         name,
         description,
+        type,
+        tag,
+        venue,
+        date: date ? new Date(date) : undefined,
+        capacity: capacity !== undefined ? Number(capacity) : undefined,
+        price: price !== undefined ? Number(price) : undefined,
+        amenities: Array.isArray(amenities) ? amenities : undefined,
+        available: available !== undefined ? Boolean(available) : undefined,
       },
     });
     return res.json(updatedEvent);
