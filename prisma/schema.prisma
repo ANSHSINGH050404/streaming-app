@@ -29,15 +29,32 @@ model Booking {
   userId  String
   eventId String
   user    User   @relation(fields: [userId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id])
 }
 
 model Event {
   id          String    @id @default(uuid())
   name        String
   description String
+  type        EventType
+  tag         String?
+  venue       String
+  date        DateTime
+  capacity    Int
+  price       Float
+  available   Boolean   @default(true)
+  amenities   String[]
   adminId     String
-  payment     Payment[]
   admin       Admin     @relation(fields: [adminId], references: [id])
+  bookings    Booking[]
+  payments    Payment[]
+}
+
+enum EventType {
+  Concert
+  Workshop
+  Gala
+  Conference
 }
 
 model Payment {
@@ -54,4 +71,3 @@ enum PaymentState {
   Fail
   Pending
 }
-

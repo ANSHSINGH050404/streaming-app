@@ -80,6 +80,14 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+
+    /* Custom variables for Aurantia theme */
+    --amber: #c8843a;
+    --ink: #1a1410;
+    --ink-soft: #3a322c;
+    --dust: #8c8279;
+    --cream: #faf7f2;
+    --sand-dark: #ede6d8;
 }
 
 .dark {
@@ -114,6 +122,14 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+
+    /* Dark theme overrides for custom variables */
+    --amber: #e6a86c;
+    --ink: #faf7f2;
+    --ink-soft: #ede6d8;
+    --dust: #b5ada6;
+    --cream: #1a1410;
+    --sand-dark: #3a322c;
 }
 
 @layer base {
