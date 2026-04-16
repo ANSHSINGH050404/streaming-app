@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { prisma } from "../config/db";
 import authenticator from "authenticator";
+import jwt from "jsonwebtoken";
 
 export const getAllAdmin = async (req: Request, res: Response) => {
   try {
@@ -56,7 +57,11 @@ export const verify = async (req: Request, res: Response) => {
         where: { phone_number },
         data: { verified: true },
       });
-      res.json({ message: "Verification successful", user });
+      const token = jwt.sign(
+        { phone_number: user.phone_number, role: "admin" },
+        process.env.JWT_SECRET!,
+      );
+      res.json({ message: "Verification successful", user, token });
     } catch (error) {
       res.status(500).json({ error: "Failed to update user status" });
     }

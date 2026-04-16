@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { prisma } from "../config/db";
 import authenticator from "authenticator";
+import jwt from "jsonwebtoken";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -10,7 +11,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch users" });
   }
 };
-
 
 export const signup = async (req: Request, res: Response) => {
   const { username, phone_number } = req.body;
@@ -56,7 +56,11 @@ export const verify = async (req: Request, res: Response) => {
         where: { phone_number },
         data: { verified: true },
       });
-      res.json({ message: "Verification successful", user });
+      const token = jwt.sign(
+        { phone_number: user.phone_number, role: "user" },
+        process.env.JWT_SECRET!,
+      );
+      res.json({ message: "Verification successful", user, token });
     } catch (error) {
       res.status(500).json({ error: "Failed to update user status" });
     }
@@ -64,7 +68,6 @@ export const verify = async (req: Request, res: Response) => {
     res.status(401).json({ error: "Invalid OTP" });
   }
 };
-
 
 export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;

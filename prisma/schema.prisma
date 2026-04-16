@@ -8,16 +8,49 @@ datasource db {
 }
 
 model User {
-  id           String  @id @default(uuid())
+  id           String    @id @default(uuid())
   username     String?
-  phone_number String  @unique
-  verified     Boolean @default(false)
+  phone_number String    @unique
+  verified     Boolean   @default(false)
+  booking      Booking[]
+  payment      Payment[]
 }
-
 
 model Admin {
   id           String  @id @default(uuid())
   username     String?
   phone_number String  @unique
   verified     Boolean @default(false)
+  events       Event[]
+}
+
+model Booking {
+  id      String @id @default(uuid())
+  userId  String
+  eventId String
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  adminId     String
+  payment     Payment[]
+  admin       Admin     @relation(fields: [adminId], references: [id])
+}
+
+model Payment {
+  id      String       @id @default(uuid())
+  eventId String
+  userId  String
+  status  PaymentState
+  user    User         @relation(fields: [userId], references: [id])
+  event   Event        @relation(fields: [eventId], references: [id])
+}
+
+enum PaymentState {
+  Success
+  Fail
+  Pending
 }
