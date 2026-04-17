@@ -10,6 +10,7 @@ datasource db {
 model User {
   id           String    @id @default(uuid())
   username     String?
+  email        String    @unique     
   phone_number String    @unique
   verified     Boolean   @default(false)
   booking      Booking[]
@@ -25,11 +26,31 @@ model Admin {
 }
 
 model Booking {
-  id      String @id @default(uuid())
-  userId  String
-  eventId String
-  user    User   @relation(fields: [userId], references: [id])
-  event   Event  @relation(fields: [eventId], references: [id])
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  checkedIn Boolean  @default(false)
+  checkInAt DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+  seats     Seat[]
+}
+
+model Seat {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  bookingId String
+  quantity  Int
+  type      SeatType
+  booking  Booking @relation(fields: [bookingId], references: [id])
+}
+
+enum SeatType {
+  Silver
+  Gold
+  Diamond
 }
 
 model Event {
@@ -42,6 +63,8 @@ model Event {
   date        DateTime
   capacity    Int
   price       Float
+  startTime   DateTime?
+  endTime     DateTime?
   available   Boolean   @default(true)
   amenities   String[]
   adminId     String

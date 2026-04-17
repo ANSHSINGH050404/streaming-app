@@ -18,6 +18,7 @@ import axios from "axios";
 
 export default function HomePage() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [role, setRole] = useState<"user" | "admin">("user");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function HomePage() {
       const endpoint = role === "admin" ? "/admin/signup" : "/users/signup";
       const res = await axios.post(`${BACKEND_URL}${endpoint}`, {
         phone_number: phoneNumber,
+        email:email
       });
 
       const data = res.data;
@@ -101,6 +103,20 @@ export default function HomePage() {
                 required
               />
             </div>
+
+            {role === "user" && (
+              <div className="grid gap-2" suppressHydrationWarning>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            )}
 
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Sending OTP..." : "Get Started"}

@@ -13,7 +13,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const signup = async (req: Request, res: Response) => {
-  const { username, phone_number } = req.body;
+  const { username, phone_number ,email} = req.body;
   if (!phone_number) {
     return res.status(400).json({ error: "phone_number is required" });
   }
@@ -25,6 +25,7 @@ export const signup = async (req: Request, res: Response) => {
       create: {
         username,
         phone_number,
+        email
       },
       update: {
         username,

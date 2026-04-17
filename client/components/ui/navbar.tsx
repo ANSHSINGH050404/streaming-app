@@ -1,14 +1,19 @@
 "use client";
-import { useState } from "react";
-import { Menu, X, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, X, Plus, Scan } from "lucide-react";
 import { useAuthStore } from "@/lib/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { role, logout } = useAuthStore();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -36,11 +41,17 @@ export default function Navbar() {
 
       {/* CTA */}
       <div className="hidden md:flex items-center gap-6">
-        {role === "admin" && (
+        {mounted && role === "admin" && (
+          <>
+            <Link href="/admin/scanner" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+                <Scan size={14} />
+                <span className="text-xs tracking-widest uppercase font-bold">Scanner</span>
+            </Link>
             <Link href="/events" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
                 <Plus size={14} />
                 <span className="text-xs tracking-widest uppercase font-bold">Host Event</span>
             </Link>
+          </>
         )}
         <button onClick={handleLogout} className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground">
           Logout
@@ -62,8 +73,15 @@ export default function Navbar() {
           {["Explore", "Categories", "Venues", "Contact"].map(item => (
             <a key={item} href="#" className="py-1 text-muted-foreground hover:text-foreground">{item}</a>
           ))}
-          {role === "admin" && (
-              <Link href="/events" className="py-1 text-primary font-bold">Host Event</Link>
+          {mounted && role === "admin" && (
+            <>
+              <Link href="/admin/scanner" className="py-1 text-foreground font-bold flex items-center gap-2">
+                <Scan size={14} /> Scanner
+              </Link>
+              <Link href="/events" className="py-1 text-primary font-bold flex items-center gap-2">
+                <Plus size={14} /> Host Event
+              </Link>
+            </>
           )}
           <button onClick={handleLogout} className="py-1 text-left text-muted-foreground hover:text-foreground">
             Logout

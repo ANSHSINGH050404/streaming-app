@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
   const role = request.cookies.get("userRole")?.value;
 
   const pathname = request.nextUrl.pathname;
+  
+  // Define protected routes
   const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/events");
-  const isAdminRoute = pathname === "/events";
+  
+  // Define admin-only routes
+  const isAdminRoute = pathname === "/events" || pathname.startsWith("/admin");
 
   // If trying to access a protected route without a token
   if (isProtectedRoute && !token) {
@@ -27,7 +31,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Apply only to relevant routes
+// Apply to all relevant routes
 export const config = {
-  matcher: ["/", "/otp/:path*", "/dashboard/:path*", "/events/:path*"],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
